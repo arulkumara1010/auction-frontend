@@ -1,12 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import socket from "@/lib/socket";
-
+import useStore from "@/lib/store";
 export default function Auction() {
     const [player, setPlayer] = useState(null);
     const [timer, setTimer] = useState(30);
     const [currentBid, setCurrentBid] = useState({ amount: 0, team: null });
     const [auctionStarted, setAuctionStarted] = useState(false);
+    const selectedTeam = useStore((state) => state.selectedTeam);
 
     useEffect(() => {
         socket.on("auction_started", () => {
@@ -48,11 +49,15 @@ export default function Auction() {
             return;
         }
 
+        if (!selectedTeam) {
+            alert("⚠️ You need to select a team before bidding.");
+            return;
+        }
         console.log(`🚀 Placing bid for Player ${player.id}`);
 
         socket.emit("place_bid", {
             player_id: player.id,
-            team_id: "badf3cba-3e82-4950-b62f-0111ff5bbd49", // Replace with actual team ID from auth
+            team_id: selectedTeam,
         });
     };
 
@@ -61,11 +66,13 @@ export default function Auction() {
             <h1 className="text-2xl font-bold">IPL Auction</h1>
             {player ? (
                 <>
-                    <h2 className="text-xl font-semibold">{player.name} - {player.role}</h2>
+                    <h2 className="text-xl font-semibold">
+                        {player.name} - {player.role}
+                    </h2>
                     <p>Base Price: ₹{player.base_price}L</p>
                     <p>
-                        Current Bid: ₹{currentBid.amount}L 
-                        (Team {currentBid.team || "None"})
+                        Current Bid: ₹{currentBid.amount}L (Team {currentBid.team || "None"}
+                        )
                     </p>
                     <p>Time Left: {timer}s</p>
                     <button

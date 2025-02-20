@@ -1,32 +1,44 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import useStore from "@/lib/store";
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const login = useStore((state) => state.login);
 
     const handleLogin = async () => {
-        try {
-            const res = await axios.post("http://localhost:5000/auth/login", {
-                username, password,
-            });
-            localStorage.setItem("token", res.data.token);
+        const success = await login(username, password);
+        if (success) {
             router.push("/teams");
-        } catch (error) {
-            alert("Login failed.");
+        } else {
+            alert("Login Failed");
         }
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-2xl font-bold">IPL Auction Login</h1>
-            <input type="text" placeholder="Username" className="border p-2" onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password" className="border p-2" onChange={(e) => setPassword(e.target.value)} />
-            <button className="bg-blue-500 text-white px-4 py-2" onClick={handleLogin}>Login</button>
+        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+            <h1 className="text-2xl font-bold mb-4">IPL Auction Login</h1>
+            <input
+                type="text"
+                placeholder="Username"
+                className="border p-2 mb-2 w-64"
+                onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+                type="password"
+                placeholder="Password"
+                className="border p-2 mb-4 w-64"
+                onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                onClick={handleLogin}
+            >
+                Login
+            </button>
         </div>
     );
 }
-

@@ -1,26 +1,25 @@
-
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import useStore from "@/lib/store";
 
 export default function Teams() {
     const [teams, setTeams] = useState([]);
     const router = useRouter();
+    const { selectedTeam, selectTeam } = useStore();
 
     useEffect(() => {
-        axios.get("http://localhost:5000/teams")
-            .then(res => setTeams(res.data))
-            .catch(err => console.error(err));
+        axios
+            .get("http://localhost:5000/teams")
+            .then((res) => setTeams(res.data))
+            .catch(console.error);
     }, []);
 
-    const selectTeam = async (teamId) => {
-        try {
-            await axios.post("http://localhost:5000/teams/select", { team_id: teamId }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            });
+    const handleSelectTeam = async (teamId) => {
+        if (await selectTeam(teamId)) {
             router.push("/auction");
-        } catch (error) {
+        } else {
             alert("Team selection failed.");
         }
     };
@@ -28,15 +27,15 @@ export default function Teams() {
     return (
         <div>
             <h1>Select Your IPL Team</h1>
+            {selectedTeam && <p>Selected Team: {selectedTeam}</p>}
             <ul>
-                {teams.map(team => (
+                {teams.map((team) => (
                     <li key={team.id}>
-                        {team.name} 
-                        <button onClick={() => selectTeam(team.id)}>Select</button>
+                        {team.name}
+                        <button onClick={() => handleSelectTeam(team.id)}>Select</button>
                     </li>
                 ))}
             </ul>
         </div>
     );
 }
-
