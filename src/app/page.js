@@ -1,31 +1,20 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
-export default function Login() {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+export default function Home() {
     const router = useRouter();
 
-    const handleLogin = async () => {
-        try {
-            const res = await axios.post("http://localhost:5000/auth/login", {
-                username, password,
-            });
-            localStorage.setItem("token", res.data.token);
-            router.push("/teams");
-        } catch (error) {
-            alert("Login failed.");
-        }
-    };
-
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-2xl font-bold">IPL Auction Login</h1>
-            <input type="text" placeholder="Username" className="border p-2" onChange={(e) => setUsername(e.target.value)} />
-            <input type="password" placeholder="Password" className="border p-2" onChange={(e) => setPassword(e.target.value)} />
-            <button className="bg-blue-500 text-white px-4 py-2" onClick={handleLogin}>Login</button>
+        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+            <h1 className="text-3xl font-bold mb-4">Welcome to the IPL Auction System</h1>
+            <p className="text-lg text-gray-600 mb-6">Join the auction, select your team, and start bidding!</p>
+            <button 
+                className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
+                onClick={() => router.push("/login")}
+            >
+                Get Started
+            </button>
         </div>
     );
 }
+
