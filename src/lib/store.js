@@ -4,7 +4,8 @@ import axios from "axios";
 const useStore = create((set) => ({
   token: null,
   selectedTeam: null,
-
+  teams: [], // Store teams in Zustand
+  setTeams: (teams) => set({ teams }),
   login: async (username, password) => {
     try {
       const res = await axios.post("http://localhost:5000/auth/login", {

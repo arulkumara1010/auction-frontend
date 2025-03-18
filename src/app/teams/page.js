@@ -26,24 +26,29 @@ export default function Teams() {
 
   return (
     <div className="font-jetbrains p-5">
-      <h1 className="text-2xl font-bold mb-4">Select Your IPL Team</h1>
-      {selectedTeam && <p className="mb-4">Selected Team: {selectedTeam}</p>}
-      <ul className="space-y-3">
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        Select Your IPL Team
+      </h1>
+      {selectedTeam && (
+        <p className="mb-4 text-center text-lg font-semibold">
+          Selected Team: <span className="text-blue-600">{selectedTeam}</span>
+        </p>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {teams.map((team) => (
-          <li
+          <div
             key={team.id}
-            className="flex items-center justify-between p-3 border rounded"
+            onClick={() => handleSelectTeam(team.id)}
+            className={`cursor-pointer p-4 border rounded-lg text-center font-medium transition ${
+              selectedTeam === team.id
+                ? "bg-blue-500 text-white"
+                : "border-gray-800 hover:bg-gra-100"
+            }`}
           >
             {team.name}
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-              onClick={() => handleSelectTeam(team.id)}
-            >
-              Select
-            </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
