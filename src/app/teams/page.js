@@ -33,6 +33,10 @@ export default function Teams() {
     };
   }, [router]);
 
+  const getTeamName = (teamId) => {
+    const team = teams.find((t) => t.id === teamId);
+    return team ? team.name : "Unknown";
+  };
   const handleSelectTeam = async (teamId) => {
     if (await selectTeam(teamId)) {
       setIsWaiting(true);
@@ -78,7 +82,8 @@ export default function Teams() {
 
       {selectedTeam && (
         <p className="mb-4 text-center text-lg font-semibold">
-          Selected Team: <span className="text-blue-600">{selectedTeam}</span>
+          Selected Team:{" "}
+          <span className="text-blue-600">{getTeamName(selectedTeam)}</span>
         </p>
       )}
 
