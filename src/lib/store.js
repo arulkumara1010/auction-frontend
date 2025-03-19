@@ -19,7 +19,21 @@ const useStore = create((set) => ({
       return false;
     }
   },
+  register: async (name, username, password) => {
+    try {
+      const res = await axios.post("http://localhost:5000/auth/register", {
+        name,
+        username,
+        password,
+      });
 
+      console.log("✅ Registration successful:", res.data);
+      return true;
+    } catch (error) {
+      console.error("❌ Registration failed:", error);
+      return false;
+    }
+  },
   selectTeam: async (teamId) => {
     try {
       await axios.post(
