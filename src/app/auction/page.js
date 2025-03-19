@@ -12,13 +12,13 @@ export default function Auction() {
   const [playersBought, setPlayersBought] = useState([]);
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [selectedFilterTeam, setSelectedFilterTeam] = useState(null); // State for team filter
   const selectedTeam = useStore((state) => state.selectedTeam);
-
   // Fetch teams and players bought
   const fetchPlayersBought = async () => {
     try {
       const response = await axios.get("http://localhost:5000/players/bought");
+      console.log(response);
       setPlayersBought(response.data);
     } catch (error) {
       console.error("Error fetching players bought:", error);
@@ -100,7 +100,10 @@ export default function Auction() {
       alert("You need to select a team before bidding.");
       return;
     }
-
+    if (currentBid.team === selectedTeam) {
+      alert("You are already the highest bidder. You cannot bid again.");
+      return;
+    }
     socket.emit("place_bid", {
       player_id: player.id,
       team_id: selectedTeam,
@@ -154,6 +157,15 @@ export default function Auction() {
   const currentTeam = getCurrentTeamDetails();
   const currentTeamStats = currentTeam ? getTeamStats(currentTeam.id) : null;
 
+  // Filter players based on selected team
+  const filteredPlayersBought = selectedFilterTeam
+    ? playersBought.filter((p) => p.sold_team === selectedFilterTeam)
+    : playersBought;
+  const getTopBuys = () => {
+    return [...playersBought]
+      .sort((a, b) => b.sold_price - a.sold_price) // Sort by sold_price in descending order
+      .slice(0, 10); // Take the top 10 entries
+  };
   return (
     <div className="h-screen w-full font-jetbrains bg-gray-50 flex flex-col justify-between p-6">
       {/* Header */}
@@ -162,37 +174,71 @@ export default function Auction() {
           IPL Auction Simulator
         </h1>
       </header>
-
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-4 gap-6 h-[75vh]">
-        {/* Players Bought Section */}
-        <section className="col-span-1 bg-white rounded-xl shadow-md p-4 overflow-y-scroll">
-          <h2 className="text-xl font-semibold mb-4">Players Sold</h2>
-
-          {loading ? (
-            <p className="text-center text-gray-500">Loading players...</p>
-          ) : playersBought?.length > 0 ? (
-            <div className="space-y-4">
-              {playersBought.map((player) => (
-                <div key={player.id} className="border p-3 rounded-lg">
-                  <p className="font-bold">{player.name}</p>
-                  <p>Role: {player.role}</p>
-                  <p>Team: {getTeamName(player.sold_team)}</p>
-                  <p>Price: ₹{player.sold_price}L</p>
-                </div>
-              ))}
+      <div className="grid grid-cols-3 gap-6 h-[75vh]">
+        {/* First Column: Players Sold + Top Buys */}
+        <div className="col-span-1 flex flex-col gap-6 h-[75vh]">
+          {/* Players Sold Section */}
+          <section className="bg-white rounded-xl shadow-md p-4 flex-1 overflow-y-scroll">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Players Sold</h2>
+              {/* Dropdown for team filter */}
+              <select
+                className="border border-gray-300 rounded-lg px-3 py-1"
+                value={selectedFilterTeam || ""}
+                onChange={(e) => setSelectedFilterTeam(e.target.value || null)}
+              >
+                <option value="">All Teams</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>
+                    {team.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          ) : (
-            <p className="text-gray-500">No players bought yet</p>
-          )}
-        </section>
-
-        {/* Auction Area Section - Split into two halves */}
-        <section className="col-span-2 bg-white rounded-xl shadow-md p-6 flex flex-col overflow-y-scroll">
+            {loading ? (
+              <p className="text-center text-gray-500">Loading players...</p>
+            ) : filteredPlayersBought?.length > 0 ? (
+              <div className="space-y-4">
+                {filteredPlayersBought.map((player) => (
+                  <div key={player.id} className="border p-3 rounded-lg">
+                    <p className="font-bold">{player.name}</p>
+                    <p>Role: {player.role}</p>
+                    <p>Team: {getTeamName(player.sold_team)}</p>
+                    <p>Price: ₹{player.sold_price}L</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No players bought yet</p>
+            )}
+          </section>
+          {/* Top Buys Section */}
+          <section className="bg-white rounded-xl shadow-md p-4 flex-1 overflow-y-scroll">
+            <h2 className="text-xl font-semibold mb-4">Top Buys</h2>
+            {loading ? (
+              <p className="text-center text-gray-500">Loading top buys...</p>
+            ) : playersBought?.length > 0 ? (
+              <div className="space-y-4">
+                {getTopBuys().map((player) => (
+                  <div key={player.id} className="border p-3 rounded-lg">
+                    <p className="font-bold">{player.name}</p>
+                    <p>Role: {player.role}</p>
+                    <p>Team: {getTeamName(player.sold_team)}</p>
+                    <p>Price: ₹{player.sold_price}L</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No players bought yet</p>
+            )}
+          </section>
+        </div>
+        {/* Second Column: Auction Area */}
+        <section className="col-span-1 bg-white rounded-xl shadow-md p-6 overflow-y-scroll">
           <h2 className="text-xl font-bold mb-4 text-left">Auction Area</h2>
-
-          {/* First: Team Details (moved up) */}
-          <div className="flex-1 mb-4 border-b pb-4">
+          {/* Current Team Details */}
+          <div className="mb-4 border-b pb-4">
             <h3 className="text-lg font-semibold mb-2">Current Team Details</h3>
             {currentTeam && currentTeamStats ? (
               <div className="space-y-4">
@@ -213,7 +259,6 @@ export default function Auction() {
                     </p>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="font-semibold">Total Players:</p>
@@ -240,7 +285,6 @@ export default function Auction() {
                     </p>
                   </div>
                 </div>
-
                 <button
                   className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full"
                   onClick={placeBid}
@@ -252,60 +296,50 @@ export default function Auction() {
               <p className="text-center text-gray-500">No team selected</p>
             )}
           </div>
-
-          {/* Second: Player Details */}
+          {/* Player Details */}
           <div className="flex-1">
             <h3 className="text-lg font-semibold mb-2">Player Details</h3>
             {player ? (
               <div className="space-y-4">
                 <h3 className="text-2xl font-semibold">{player.name}</h3>
-
                 <div className="grid grid-cols-3 gap-6 text-left">
                   {/* Row 1 */}
                   <div>
                     <p className="font-semibold">Set Name:</p>
                     <p className="text-gray-700">{player.setname}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Player No:</p>
                     <p className="text-gray-700">{player.playerno}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Base Price:</p>
                     <p className="text-gray-700">₹{player.base_price}L</p>
                   </div>
-
                   {/* Row 2 */}
                   <div>
                     <p className="font-semibold">Age:</p>
                     <p className="text-gray-700">{player.age}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Country:</p>
                     <p className="text-gray-700">{player.country}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Capped:</p>
                     <p className="text-gray-700">
                       {player.capped ? "Yes" : "No"}
                     </p>
                   </div>
-
                   {/* Row 3 */}
                   <div>
                     <p className="font-semibold">Role:</p>
                     <p className="text-gray-700">{player.role}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Batting Style:</p>
                     <p className="text-gray-700">{player.batting_style}</p>
                   </div>
-
                   <div>
                     <p className="font-semibold">Bowling Style:</p>
                     <p className="text-gray-700">{player.bowling_style}</p>
@@ -318,7 +352,7 @@ export default function Auction() {
           </div>
         </section>
 
-        {/* Other Teams Section */}
+        {/* Third Column: Other Teams */}
         <section className="col-span-1 bg-white rounded-xl shadow-md p-4 overflow-y-scroll">
           <h2 className="text-xl font-semibold mb-4">Other Teams</h2>
           {loading ? (
@@ -363,19 +397,16 @@ export default function Auction() {
           )}
         </section>
       </div>
-
       {/* Footer Section */}
       <footer className="grid grid-cols-3 gap-6 mt-4">
         <div className="bg-white p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Time Left</h2>
           <p className="text-2xl">{timer}s</p>
         </div>
-
         <div className="bg-white p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Current Bid</h2>
           <p className="text-2xl">₹{currentBid.amount}L</p>
         </div>
-
         <div className="bg-white p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Current Bid Team</h2>
           <p className="text-2xl">{getTeamName(currentBid.team)}</p>
