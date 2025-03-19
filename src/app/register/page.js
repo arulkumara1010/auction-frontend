@@ -48,7 +48,7 @@ export default function Register() {
         <div 
           className="absolute inset-0 bg-cover bg-center" 
           style={{ 
-            backgroundImage: "url('/images/ipl_sta.jpeg')", 
+            backgroundImage: "url('/images/ipl_sta1.jpg')", 
             backgroundSize: "cover",
             filter: "brightness(0.4)"
           }}
