@@ -3,13 +3,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useStore from "@/lib/store";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
   const router = useRouter();
   const register = useStore((state) => state.register);
 
@@ -18,32 +18,32 @@ export default function Register() {
     
     // Form validation
     if (!name || !username || !password) {
-      setError("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
     
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
     
     try {
       const success = await register(name, username, password);
       if (success) {
-        // Redirect to login page after successful registration
+        toast.success("Registration successful! Redirecting...");
         router.push("/login");
       } else {
-        setError("Registration failed. Username might already exist.");
+        toast.error("Registration failed. Username might already exist.");
       }
     } catch (err) {
-      setError("Registration error. Please try again later.");
+      toast.error("Registration error. Please try again later.");
       console.error("Registration error:", err);
     }
   };
 
   return (
     <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
-      {/* Background with overlay - same as login page for consistency */}
+      {/* Background and overlays same as before */}
       <div className="absolute inset-0 z-0">
         <div 
           className="absolute inset-0 bg-cover bg-center" 
@@ -53,31 +53,20 @@ export default function Register() {
             filter: "brightness(0.4)"
           }}
         />
-        
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
       </div>
 
-      {/* IPL Teams logos pattern (subtle background) */}
       <div className="absolute inset-0 z-0 opacity-10">
         <div className="w-full h-full bg-repeat" style={{ backgroundImage: "url('/images/ipl-pattern.png')" }} />
       </div>
 
-      {/* Content */}
       <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-96">
-        {/* IPL Logo */}
         <div className="flex justify-center mb-4">
           <img src="/images/ipl_logo.png" alt="IPL Logo" className="h-16" />
         </div>
 
         <h1 className="text-2xl font-bold mb-4 text-white text-center">Registration</h1>
         <p className="text-gray-300 text-sm text-center mb-6">Register for the IPL auction</p>
-        
-        {error && (
-          <div className="bg-red-500/30 border border-red-400 text-white p-3 rounded mb-4 text-sm">
-            {error}
-          </div>
-        )}
         
         <form onSubmit={handleRegister}>
           <div className="mb-4">
