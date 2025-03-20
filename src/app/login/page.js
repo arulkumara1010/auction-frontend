@@ -44,10 +44,7 @@ export default function Login() {
       </div>
 
       <div className="absolute inset-0 z-0 opacity-10">
-        <div
-          className="w-full h-full bg-repeat"
-          style={{ backgroundImage: "url('/images/ipl-pattern.png')" }}
-        />
+        <div className="w-full h-full bg-repeat" />
       </div>
 
       <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-96">
@@ -55,7 +52,9 @@ export default function Login() {
           <img src="/images/ipl_logo.png" alt="IPL Logo" className="h-16" />
         </div>
 
-        <h1 className="text-2xl font-bold mb-6 text-white text-center">Login</h1>
+        <h1 className="text-2xl font-bold mb-6 text-white text-center">
+          Login
+        </h1>
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
@@ -93,9 +92,7 @@ export default function Login() {
         </div>
 
         <Link href="/register">
-          <button
-            className="w-full bg-transparent border-2 border-white/50 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-white/10 transition duration-300"
-          >
+          <button className="w-full bg-transparent border-2 border-white/50 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-white/10 transition duration-300">
             Register New User
           </button>
         </Link>

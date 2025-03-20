@@ -15,18 +15,18 @@ export default function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
+
     // Form validation
     if (!name || !username || !password) {
       toast.error("Please fill in all fields");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    
+
     try {
       const success = await register(name, username, password);
       if (success) {
@@ -45,19 +45,19 @@ export default function Register() {
     <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
       {/* Background and overlays same as before */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center" 
-          style={{ 
-            backgroundImage: "url('/images/ipl_sta1.jpg')", 
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/images/ipl_sta1.jpg')",
             backgroundSize: "cover",
-            filter: "brightness(0.4)"
+            filter: "brightness(0.4)",
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
       </div>
 
       <div className="absolute inset-0 z-0 opacity-10">
-        <div className="w-full h-full bg-repeat" style={{ backgroundImage: "url('/images/ipl-pattern.png')" }} />
+        <div className="w-full h-full bg-repeat" />
       </div>
 
       <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-96">
@@ -65,13 +65,17 @@ export default function Register() {
           <img src="/images/ipl_logo.png" alt="IPL Logo" className="h-16" />
         </div>
 
-        <h1 className="text-2xl font-bold mb-4 text-white text-center">Registration</h1>
-        <p className="text-gray-300 text-sm text-center mb-6">Register for the IPL auction</p>
-        
+        <h1 className="text-2xl font-bold mb-4 text-white text-center">
+          Registration
+        </h1>
+        <p className="text-gray-300 text-sm text-center mb-6">
+          Register for the IPL auction
+        </p>
+
         <form onSubmit={handleRegister}>
           <div className="mb-4">
             <label className="block text-gray-300 text-sm mb-1" htmlFor="name">
-                Name
+              Name
             </label>
             <input
               id="name"
@@ -82,9 +86,12 @@ export default function Register() {
               value={name}
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-gray-300 text-sm mb-1" htmlFor="username">
+            <label
+              className="block text-gray-300 text-sm mb-1"
+              htmlFor="username"
+            >
               Username
             </label>
             <input
@@ -96,9 +103,12 @@ export default function Register() {
               value={username}
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-gray-300 text-sm mb-1" htmlFor="password">
+            <label
+              className="block text-gray-300 text-sm mb-1"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -110,9 +120,12 @@ export default function Register() {
               value={password}
             />
           </div>
-          
+
           <div className="mb-6">
-            <label className="block text-gray-300 text-sm mb-1" htmlFor="confirmPassword">
+            <label
+              className="block text-gray-300 text-sm mb-1"
+              htmlFor="confirmPassword"
+            >
               Confirm Password
             </label>
             <input
@@ -124,7 +137,7 @@ export default function Register() {
               value={confirmPassword}
             />
           </div>
-          
+
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition duration-300 shadow-lg"
@@ -132,10 +145,16 @@ export default function Register() {
             Register
           </button>
         </form>
-        
+
         <div className="mt-6 text-center">
           <p className="text-gray-300 text-sm">
-            Already registered? <Link href="/login" className="text-blue-400 hover:text-blue-300 underline">Login here</Link>
+            Already registered?{" "}
+            <Link
+              href="/login"
+              className="text-blue-400 hover:text-blue-300 underline"
+            >
+              Login here
+            </Link>
           </p>
         </div>
       </div>

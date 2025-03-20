@@ -61,7 +61,7 @@ export default function Teams() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       console.log("✅ Auction started:", response.data);
@@ -87,10 +87,7 @@ export default function Teams() {
       </div>
 
       <div className="absolute inset-0 z-0 opacity-10">
-        <div
-          className="w-full h-full bg-repeat"
-          style={{ backgroundImage: "url('/images/ipl-pattern.png')" }}
-        />
+        <div className="w-full h-full bg-repeat" />
       </div>
 
       <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-[900px] max-h-[600px] overflow-y-auto">
@@ -100,7 +97,7 @@ export default function Teams() {
 
         {selectedTeam && (
           <p className="mb-4 text-center text-lg font-semibold text-white">
-            Selected Team: {" "}
+            Selected Team:{" "}
             <span className="text-yellow-400">{getTeamName(selectedTeam)}</span>
           </p>
         )}
