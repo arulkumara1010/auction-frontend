@@ -17,7 +17,9 @@ export default function Auction() {
   // Fetch teams and players bought
   const fetchPlayersBought = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/players/bought");
+      const response = await axios.get(
+        "https://auction-backend-7745.onrender.com/players/bought",
+      );
       console.log(response);
       setPlayersBought(response.data);
     } catch (error) {
@@ -28,8 +30,8 @@ export default function Auction() {
   const fetchData = async () => {
     try {
       const [teamsRes, playersRes] = await Promise.all([
-        axios.get("http://localhost:5000/teams"),
-        axios.get("http://localhost:5000/players/bought"),
+        axios.get("https://auction-backend-7745.onrender.com/teams"),
+        axios.get("https://auction-backend-7745.onrender.com/players/bought"),
       ]);
 
       setTeams(teamsRes.data);
@@ -168,7 +170,7 @@ export default function Auction() {
       .slice(0, 10); // Take the top 10 entries
   };
   return (
-    <div 
+    <div
       className="h-screen w-full font-jetbrains flex flex-col justify-between p-6 bg-cover bg-center"
       style={{
         backgroundImage: "url('/images/ipl_sta1.jpg')", // Make sure this path is correct
@@ -179,21 +181,21 @@ export default function Auction() {
         position: "relative",
       }}
     >
-    <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
-      
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
+
       {/* Gradient overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-white/80 pointer-events-none"
         style={{ zIndex: "-1" }}
       ></div>
-      
+
       {/* Header */}
       <header className="text-center mb-6 relative z-10">
         <h1 className="text-4xl font-bold text-white">
           IPL Auction Simulator 2025
         </h1>
       </header>
-      
+
       {/* Main Grid Layout */}
       <div className="grid grid-cols-4 gap-6 h-[75vh] relative z-10">
         {/* First Column: Players Sold + Top Buys */}
@@ -255,7 +257,10 @@ export default function Auction() {
                 <p className="text-center text-gray-500">Loading top buys...</p>
               ) : playersBought?.length > 0 ? (
                 getTopBuys().map((player) => (
-                  <div key={player.id} className="border p-3 rounded-lg bg-white/80">
+                  <div
+                    key={player.id}
+                    className="border p-3 rounded-lg bg-white/80"
+                  >
                     <p className="font-bold">{player.name}</p>
                     <p>Role: {player.role}</p>
                     <p>Team: {getTeamName(player.sold_team)}</p>
@@ -268,7 +273,7 @@ export default function Auction() {
             </div>
           </section>
         </div>
-        
+
         {/* Second Column: Auction Area */}
         <section className="col-span-2 bg-white/90 backdrop-blur-md rounded-xl shadow-md p-6 overflow-y-scroll">
           <h2 className="text-xl font-bold mb-4 text-left">Auction Area</h2>
@@ -432,7 +437,7 @@ export default function Auction() {
           )}
         </section>
       </div>
-      
+
       {/* Footer Section */}
       <footer className="grid grid-cols-3 gap-6 mt-4 relative z-10">
         <div className="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-md text-center">

@@ -14,7 +14,7 @@ export default function Teams() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/teams")
+      .get("https://auction-backend-7745.onrender.com/teams")
       .then((res) => setTeams(res.data))
       .catch(console.error);
 
@@ -54,7 +54,7 @@ export default function Teams() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/auction/start",
+        "https://auction-backend-7745.onrender.com/auction/start",
         {},
         {
           headers: {

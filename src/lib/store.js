@@ -8,10 +8,13 @@ const useStore = create((set) => ({
   setTeams: (teams) => set({ teams }),
   login: async (username, password) => {
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "https://auction-backend-7745.onrender.com/auth/login",
+        {
+          username,
+          password,
+        },
+      );
       localStorage.setItem("token", res.data.token);
       set({ token: res.data.token });
       return true;
@@ -21,11 +24,14 @@ const useStore = create((set) => ({
   },
   register: async (name, username, password) => {
     try {
-      const res = await axios.post("http://localhost:5000/auth/register", {
-        name,
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "https://auction-backend-7745.onrender.com/auth/register",
+        {
+          name,
+          username,
+          password,
+        },
+      );
 
       console.log("✅ Registration successful:", res.data);
       return true;
@@ -37,7 +43,7 @@ const useStore = create((set) => ({
   selectTeam: async (teamId) => {
     try {
       await axios.post(
-        "http://localhost:5000/teams/select",
+        "https://auction-backend-7745.onrender.com/teams/select",
         { team_id: teamId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
