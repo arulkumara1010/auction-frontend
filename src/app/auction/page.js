@@ -168,19 +168,38 @@ export default function Auction() {
       .slice(0, 10); // Take the top 10 entries
   };
   return (
-    <div className="h-screen w-full font-jetbrains bg-gray-50 flex flex-col justify-between p-6">
+    <div 
+      className="h-screen w-full font-jetbrains flex flex-col justify-between p-6 bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/images/ipl_sta1.jpg')", // Make sure this path is correct
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        position: "relative",
+      }}
+    >
+    <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
+      
+      {/* Gradient overlay */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-white/80 pointer-events-none"
+        style={{ zIndex: "-1" }}
+      ></div>
+      
       {/* Header */}
-      <header className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-gray-800">
-          IPL Auction Simulator
+      <header className="text-center mb-6 relative z-10">
+        <h1 className="text-4xl font-bold text-white">
+          IPL Auction Simulator 2025
         </h1>
       </header>
+      
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-4 gap-6 h-[75vh]">
+      <div className="grid grid-cols-4 gap-6 h-[75vh] relative z-10">
         {/* First Column: Players Sold + Top Buys */}
         <div className="col-span-1 flex flex-col gap-6 h-[75vh]">
           {/* Players Sold Section */}
-          <section className="bg-white rounded-xl shadow-md p-4 flex flex-col h-[37.5vh]">
+          <section className="bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4 flex flex-col h-[37.5vh]">
             {/* Title and Filter */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Players Sold</h2>
@@ -206,7 +225,7 @@ export default function Auction() {
                 filteredPlayersBought.map((player) => (
                   <div
                     key={player.id || `player-${Math.random()}`}
-                    className="border p-3 rounded-lg"
+                    className="border p-3 rounded-lg bg-white/80"
                   >
                     <p className="font-bold">{player.name}</p>
                     <p>Role: {player.role}</p>
@@ -227,7 +246,7 @@ export default function Auction() {
           </section>
 
           {/* Top Buys Section */}
-          <section className="bg-white rounded-xl shadow-md p-4 flex flex-col h-[35vh]">
+          <section className="bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4 flex flex-col h-[35vh]">
             {/* Title */}
             <h2 className="text-xl font-semibold mb-4">Top Buys</h2>
             {/* Scrollable Player List */}
@@ -236,7 +255,7 @@ export default function Auction() {
                 <p className="text-center text-gray-500">Loading top buys...</p>
               ) : playersBought?.length > 0 ? (
                 getTopBuys().map((player) => (
-                  <div key={player.id} className="border p-3 rounded-lg">
+                  <div key={player.id} className="border p-3 rounded-lg bg-white/80">
                     <p className="font-bold">{player.name}</p>
                     <p>Role: {player.role}</p>
                     <p>Team: {getTeamName(player.sold_team)}</p>
@@ -249,8 +268,9 @@ export default function Auction() {
             </div>
           </section>
         </div>
+        
         {/* Second Column: Auction Area */}
-        <section className="col-span-2 bg-white rounded-xl shadow-md p-6 overflow-y-scroll">
+        <section className="col-span-2 bg-white/90 backdrop-blur-md rounded-xl shadow-md p-6 overflow-y-scroll">
           <h2 className="text-xl font-bold mb-4 text-left">Auction Area</h2>
           {/* Current Team Details */}
           <div className="mb-4 border-b pb-4">
@@ -368,7 +388,7 @@ export default function Auction() {
         </section>
 
         {/* Third Column: Other Teams */}
-        <section className="col-span-1 bg-white rounded-xl shadow-md p-4 overflow-y-scroll">
+        <section className="col-span-1 bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4 overflow-y-scroll">
           <h2 className="text-xl font-semibold mb-4">Other Teams</h2>
           {loading ? (
             <p className="text-center text-gray-500">Loading teams...</p>
@@ -382,7 +402,7 @@ export default function Auction() {
                     className={`border p-3 rounded-lg flex flex-col cursor-pointer ${
                       selectedTeam === team.id
                         ? "border-blue-500 bg-blue-50"
-                        : ""
+                        : "bg-white/80"
                     }`}
                   >
                     <div className="flex items-center mb-2">
@@ -412,17 +432,18 @@ export default function Auction() {
           )}
         </section>
       </div>
+      
       {/* Footer Section */}
-      <footer className="grid grid-cols-3 gap-6 mt-4">
-        <div className="bg-white p-4 rounded-xl shadow-md text-center">
+      <footer className="grid grid-cols-3 gap-6 mt-4 relative z-10">
+        <div className="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Time Left</h2>
           <p className="text-2xl">{timer}s</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-md text-center">
+        <div className="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Current Bid</h2>
           <p className="text-2xl">₹{currentBid.amount}L</p>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-md text-center">
+        <div className="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-md text-center">
           <h2 className="text-lg font-semibold">Current Bid Team</h2>
           <p className="text-2xl">{getTeamName(currentBid.team)}</p>
         </div>
