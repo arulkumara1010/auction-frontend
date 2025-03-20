@@ -163,6 +163,7 @@ export default function Auction() {
     : playersBought;
   const getTopBuys = () => {
     return [...playersBought]
+      .filter((player) => player.sold_team && player.sold_price) // Include only sold players
       .sort((a, b) => b.sold_price - a.sold_price) // Sort by sold_price in descending order
       .slice(0, 10); // Take the top 10 entries
   };
@@ -175,11 +176,12 @@ export default function Auction() {
         </h1>
       </header>
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-3 gap-6 h-[75vh]">
+      <div className="grid grid-cols-4 gap-6 h-[75vh]">
         {/* First Column: Players Sold + Top Buys */}
         <div className="col-span-1 flex flex-col gap-6 h-[75vh]">
           {/* Players Sold Section */}
-          <section className="bg-white rounded-xl shadow-md p-4 flex-1 overflow-y-scroll">
+          <section className="bg-white rounded-xl shadow-md p-4 flex flex-col h-[37.5vh]">
+            {/* Title and Filter */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Players Sold</h2>
               {/* Dropdown for team filter */}
@@ -196,46 +198,59 @@ export default function Auction() {
                 ))}
               </select>
             </div>
-            {loading ? (
-              <p className="text-center text-gray-500">Loading players...</p>
-            ) : filteredPlayersBought?.length > 0 ? (
-              <div className="space-y-4">
-                {filteredPlayersBought.map((player) => (
-                  <div key={player.id} className="border p-3 rounded-lg">
+            {/* Scrollable Player List */}
+            <div className="flex-1 overflow-y-scroll space-y-4">
+              {loading ? (
+                <p className="text-center text-gray-500">Loading players...</p>
+              ) : filteredPlayersBought?.length > 0 ? (
+                filteredPlayersBought.map((player) => (
+                  <div
+                    key={player.id || `player-${Math.random()}`}
+                    className="border p-3 rounded-lg"
+                  >
                     <p className="font-bold">{player.name}</p>
                     <p>Role: {player.role}</p>
-                    <p>Team: {getTeamName(player.sold_team)}</p>
-                    <p>Price: ₹{player.sold_price}L</p>
+                    {player.sold_team ? (
+                      <>
+                        <p>Team: {getTeamName(player.sold_team)}</p>
+                        <p>Price: ₹{player.sold_price}L</p>
+                      </>
+                    ) : (
+                      <p className="text-red-500">Status: Unsold</p>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No players bought yet</p>
-            )}
+                ))
+              ) : (
+                <p className="text-gray-500">No players bought yet</p>
+              )}
+            </div>
           </section>
+
           {/* Top Buys Section */}
-          <section className="bg-white rounded-xl shadow-md p-4 flex-1 overflow-y-scroll">
+          <section className="bg-white rounded-xl shadow-md p-4 flex flex-col h-[35vh]">
+            {/* Title */}
             <h2 className="text-xl font-semibold mb-4">Top Buys</h2>
-            {loading ? (
-              <p className="text-center text-gray-500">Loading top buys...</p>
-            ) : playersBought?.length > 0 ? (
-              <div className="space-y-4">
-                {getTopBuys().map((player) => (
+            {/* Scrollable Player List */}
+            <div className="flex-1 overflow-y-scroll space-y-4">
+              {loading ? (
+                <p className="text-center text-gray-500">Loading top buys...</p>
+              ) : playersBought?.length > 0 ? (
+                getTopBuys().map((player) => (
                   <div key={player.id} className="border p-3 rounded-lg">
                     <p className="font-bold">{player.name}</p>
                     <p>Role: {player.role}</p>
                     <p>Team: {getTeamName(player.sold_team)}</p>
                     <p>Price: ₹{player.sold_price}L</p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No players bought yet</p>
-            )}
+                ))
+              ) : (
+                <p className="text-gray-500">No players bought yet</p>
+              )}
+            </div>
           </section>
         </div>
         {/* Second Column: Auction Area */}
-        <section className="col-span-1 bg-white rounded-xl shadow-md p-6 overflow-y-scroll">
+        <section className="col-span-2 bg-white rounded-xl shadow-md p-6 overflow-y-scroll">
           <h2 className="text-xl font-bold mb-4 text-left">Auction Area</h2>
           {/* Current Team Details */}
           <div className="mb-4 border-b pb-4">
