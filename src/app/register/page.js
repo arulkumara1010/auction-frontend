@@ -42,7 +42,7 @@ export default function Register() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4">
       {/* Background and overlays same as before */}
       <div className="absolute inset-0 z-0">
         <div
@@ -60,36 +60,43 @@ export default function Register() {
         <div className="w-full h-full bg-repeat" />
       </div>
 
-      <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-96">
-        <div className="flex justify-center mb-4">
-          <img src="/images/ipl_logo.png" alt="IPL Logo" className="h-16" />
+      <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl border border-white/20 w-full max-w-sm">
+        <div className="flex justify-center mb-3 sm:mb-4">
+          <img
+            src="/images/ipl_logo.png"
+            alt="IPL Logo"
+            className="h-12 sm:h-16"
+          />
         </div>
 
-        <h1 className="text-2xl font-bold mb-4 text-white text-center">
+        <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-white text-center">
           Registration
         </h1>
-        <p className="text-gray-300 text-sm text-center mb-6">
+        <p className="text-gray-300 text-xs sm:text-sm text-center mb-4 sm:mb-6">
           Register for the IPL auction
         </p>
 
         <form onSubmit={handleRegister}>
-          <div className="mb-4">
-            <label className="block text-gray-300 text-sm mb-1" htmlFor="name">
+          <div className="mb-3 sm:mb-4">
+            <label
+              className="block text-gray-300 text-xs sm:text-sm mb-1"
+              htmlFor="name"
+            >
               Name
             </label>
             <input
               id="name"
               type="text"
               placeholder="Your Name"
-              className="border border-white/30 bg-white/10 p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-white/30 bg-white/10 p-2 sm:p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               onChange={(e) => setName(e.target.value)}
               value={name}
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <label
-              className="block text-gray-300 text-sm mb-1"
+              className="block text-gray-300 text-xs sm:text-sm mb-1"
               htmlFor="username"
             >
               Username
@@ -98,15 +105,15 @@ export default function Register() {
               id="username"
               type="text"
               placeholder="Choose a unique username"
-              className="border border-white/30 bg-white/10 p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-white/30 bg-white/10 p-2 sm:p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               onChange={(e) => setUsername(e.target.value)}
               value={username}
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <label
-              className="block text-gray-300 text-sm mb-1"
+              className="block text-gray-300 text-xs sm:text-sm mb-1"
               htmlFor="password"
             >
               Password
@@ -115,15 +122,15 @@ export default function Register() {
               id="password"
               type="password"
               placeholder="Create a secure password"
-              className="border border-white/30 bg-white/10 p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-white/30 bg-white/10 p-2 sm:p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-5 sm:mb-6">
             <label
-              className="block text-gray-300 text-sm mb-1"
+              className="block text-gray-300 text-xs sm:text-sm mb-1"
               htmlFor="confirmPassword"
             >
               Confirm Password
@@ -132,7 +139,7 @@ export default function Register() {
               id="confirmPassword"
               type="password"
               placeholder="Confirm your password"
-              className="border border-white/30 bg-white/10 p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-white/30 bg-white/10 p-2 sm:p-3 rounded-lg w-full font-jetbrains text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               onChange={(e) => setConfirmPassword(e.target.value)}
               value={confirmPassword}
             />
@@ -140,14 +147,14 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition duration-300 shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-2.5 sm:py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition duration-300 shadow-lg text-sm sm:text-base"
           >
             Register
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-300 text-sm">
+        <div className="mt-5 sm:mt-6 text-center">
+          <p className="text-gray-300 text-xs sm:text-sm">
             Already registered?{" "}
             <Link
               href="/login"

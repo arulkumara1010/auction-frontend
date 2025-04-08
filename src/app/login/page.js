@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useStore from "@/lib/store";
 import Link from "next/link";
-// import { toast } from "react-toastify";
 import toast from "react-hot-toast";
 
 export default function Login() {
@@ -29,7 +28,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden px-4">
       <div className="absolute inset-0 z-0">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -47,12 +46,16 @@ export default function Login() {
         <div className="w-full h-full bg-repeat" />
       </div>
 
-      <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 w-96">
-        <div className="flex justify-center mb-6">
-          <img src="/images/ipl_logo.png" alt="IPL Logo" className="h-16" />
+      <div className="z-10 bg-white bg-opacity-10 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl border border-white/20 w-full max-w-sm">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <img
+            src="/images/ipl_logo.png"
+            alt="IPL Logo"
+            className="h-12 sm:h-16"
+          />
         </div>
 
-        <h1 className="text-2xl font-bold mb-6 text-white text-center">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-white text-center">
           Login
         </h1>
 
@@ -85,7 +88,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="flex items-center my-6">
+        <div className="flex items-center my-5 sm:my-6">
           <div className="flex-1 border-t border-gray-400/30"></div>
           <div className="px-3 text-gray-300 text-sm">or</div>
           <div className="flex-1 border-t border-gray-400/30"></div>
@@ -97,7 +100,7 @@ export default function Login() {
           </button>
         </Link>
 
-        <div className="mt-6 text-center">
+        <div className="mt-5 sm:mt-6 text-center">
           <p className="text-gray-300 text-xs">
             IPL Auction 2025 • Team Access Only
           </p>

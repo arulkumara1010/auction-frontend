@@ -13,7 +13,7 @@ const useStore = create((set) => ({
         {
           username,
           password,
-        },
+        }
       );
       localStorage.setItem("token", res.data.token);
       set({ token: res.data.token });
@@ -30,7 +30,7 @@ const useStore = create((set) => ({
           name,
           username,
           password,
-        },
+        }
       );
 
       console.log("✅ Registration successful:", res.data);
@@ -47,7 +47,7 @@ const useStore = create((set) => ({
         { team_id: teamId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
+        }
       );
 
       localStorage.setItem("selectedTeam", teamId);

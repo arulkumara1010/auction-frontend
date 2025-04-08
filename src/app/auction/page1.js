@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import socket from "@/lib/socket";
 import useStore from "@/lib/store";
 import axios from "axios";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import toast from "react-hot-toast";
 
@@ -19,6 +18,7 @@ export default function Auction() {
   const selectedTeam = useStore((state) => state.selectedTeam);
   const [activeTab, setActiveTab] = useState("auction");
   const isMobile = useIsMobile();
+
   // Fetch teams and players bought
   const fetchPlayersBought = async () => {
     try {
@@ -121,22 +121,23 @@ export default function Auction() {
   // Handle placing bid
   const placeBid = () => {
     if (!player) {
-      alert("No active player to bid on.");
+      toast.error("No active player to bid on.");
       return;
     }
 
     if (!selectedTeam) {
-      alert("You need to select a team before bidding.");
+      toast.error("You need to select a team before bidding.");
       return;
     }
+
     if (currentBid.team === selectedTeam) {
-      alert("You are already the highest bidder. You cannot bid again.");
+      toast.error("You are already the highest bidder.");
       return;
     }
-    socket.emit("place_bid", {
-      player_id: player.id,
-      team_id: selectedTeam,
-    });
+
+    // Mock bid placement
+    setCurrentBid({ amount: currentBid.amount + 20, team: selectedTeam });
+    toast.success("Bid placed successfully!");
   };
 
   // Map team ID to team name
@@ -153,28 +154,18 @@ export default function Auction() {
 
   // Get team statistics
   const getTeamStats = (teamId) => {
-    // Define teamPlayers by filtering playersBought for the given teamId
     const teamPlayers = playersBought.filter((p) => p.sold_team === teamId);
-
-    // Calculate total players
     const totalPlayers = teamPlayers.length;
-
-    // Calculate overseas players
     const overseasCount = teamPlayers.filter(
       (p) => p.country !== "India"
     ).length;
-
-    // Calculate total money spent
     const totalMoneySpent = teamPlayers.reduce(
-      (sum, p) => sum + p.sold_price,
+      (sum, p) => sum + (p.sold_price || 0),
       0
     );
-
-    // Get the team's salary cap
     const team = teams.find((t) => t.id === teamId);
-    const salaryCap = team ? team.salary_cap : 0;
+    const salaryCap = team ? team.salary_cap || 9000 : 9000;
 
-    // Return the calculated statistics
     return {
       totalPlayers,
       overseasCount,
@@ -190,12 +181,30 @@ export default function Auction() {
   const filteredPlayersBought = selectedFilterTeam
     ? playersBought.filter((p) => p.sold_team === selectedFilterTeam)
     : playersBought;
+
   const getTopBuys = () => {
     return [...playersBought]
-      .filter((player) => player.sold_team && player.sold_price) // Include only sold players
-      .sort((a, b) => b.sold_price - a.sold_price) // Sort by sold_price in descending order
-      .slice(0, 10); // Take the top 10 entries
+      .filter((player) => player.sold_team && player.sold_price)
+      .sort((a, b) => b.sold_price - a.sold_price)
+      .slice(0, 10);
   };
+
+  // Mock player data for UI demonstration
+  const mockPlayer = player || {
+    id: 1,
+    name: "MS Dhoni",
+    setname: "Set 1",
+    playerno: "07",
+    base_price: 200,
+    age: 42,
+    country: "India",
+    capped: true,
+    role: "Wicketkeeper-Batsman",
+    batting_style: "Right Handed",
+    bowling_style: "Right-arm medium",
+  };
+
+  // Mobile navigation
   const renderMobileNav = () => (
     <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg z-20">
       <div className="flex justify-between">
@@ -235,17 +244,11 @@ export default function Auction() {
 
   // Render different sections based on device and active tab
   const renderContent = () => {
-    console.log("Player", player);
     if (isMobile) {
       switch (activeTab) {
         case "auction":
           return (
             <>
-              <header className="text-center mb-6 relative z-10">
-                <h1 className="text-2xl font-bold text-white">
-                  IPL Auction Simulator 2025
-                </h1>
-              </header>
               {/* Current Bid Status */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-md text-center">
@@ -268,62 +271,50 @@ export default function Auction() {
               <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4 mb-4">
                 <h3 className="text-lg font-semibold mb-2">Player Details</h3>
                 <div className="space-y-2">
-                  {player ? (
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-semibold">{player.name}</h3>
-                      <div className="grid grid-cols-3 gap-6 text-left">
-                        {/* Row 1 */}
-                        <div>
-                          <p className="font-semibold">Set Name:</p>
-                          <p className="text-gray-700">{player.setname}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Player No:</p>
-                          <p className="text-gray-700">{player.playerno}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Base Price:</p>
-                          <p className="text-gray-700">₹{player.base_price}L</p>
-                        </div>
-                        {/* Row 2 */}
-                        <div>
-                          <p className="font-semibold">Age:</p>
-                          <p className="text-gray-700">{player.age}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Country:</p>
-                          <p className="text-gray-700">{player.country}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Capped:</p>
-                          <p className="text-gray-700">
-                            {player.capped ? "Yes" : "No"}
-                          </p>
-                        </div>
-                        {/* Row 3 */}
-                        <div>
-                          <p className="font-semibold">Role:</p>
-                          <p className="text-gray-700">{player.role}</p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Batting Style:</p>
-                          <p className="text-gray-700">
-                            {player.batting_style}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Bowling Style:</p>
-                          <p className="text-gray-700">
-                            {player.bowling_style}
-                          </p>
-                        </div>
-                      </div>
+                  <h4 className="text-xl font-semibold">{player.name}</h4>
+                  <div className="grid grid-cols-3 gap-6 text-left">
+                    {/* Row 1 */}
+                    <div>
+                      <p className="font-semibold">Set Name:</p>
+                      <p className="text-gray-700">{player.setname}</p>
                     </div>
-                  ) : (
-                    <p className="text-center">
-                      Waiting for the next player...
-                    </p>
-                  )}
+                    <div>
+                      <p className="font-semibold">Player No:</p>
+                      <p className="text-gray-700">{player.playerno}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Base Price:</p>
+                      <p className="text-gray-700">₹{player.base_price}L</p>
+                    </div>
+                    {/* Row 2 */}
+                    <div>
+                      <p className="font-semibold">Age:</p>
+                      <p className="text-gray-700">{player.age}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Country:</p>
+                      <p className="text-gray-700">{player.country}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Capped:</p>
+                      <p className="text-gray-700">
+                        {player.capped ? "Yes" : "No"}
+                      </p>
+                    </div>
+                    {/* Row 3 */}
+                    <div>
+                      <p className="font-semibold">Role:</p>
+                      <p className="text-gray-700">{player.role}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Batting Style:</p>
+                      <p className="text-gray-700">{player.batting_style}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Bowling Style:</p>
+                      <p className="text-gray-700">{player.bowling_style}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -400,11 +391,6 @@ export default function Auction() {
         case "players":
           return (
             <div className="mb-20">
-              <header className="text-center mb-6 relative z-10">
-                <h1 className="text-2xl font-bold text-white">
-                  IPL Auction Simulator 2025
-                </h1>
-              </header>
               {/* Players Sold Section */}
               <section className="bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4 mb-4">
                 <div className="flex justify-between items-center mb-4">
@@ -492,17 +478,12 @@ export default function Auction() {
         case "teams":
           return (
             <div className="mb-20">
-              <header className="text-center mb-6 relative z-10">
-                <h1 className="text-2xl font-bold text-white">
-                  IPL Auction Simulator 2025
-                </h1>
-              </header>
               <section className="bg-white/90 backdrop-blur-md rounded-xl shadow-md p-4">
-                <h2 className="text-lg font-semibold mb-3">Other Teams</h2>
+                <h2 className="text-lg font-semibold mb-3">Other Team</h2>
                 {loading ? (
                   <p className="text-center text-gray-500">Loading teams...</p>
                 ) : teams.length > 0 ? (
-                  <div className="max-h-[77.5vh] overflow-y-auto space-y-3">
+                  <div className="space-y-3">
                     {teams.map((team) => {
                       const teamStats = getTeamStats(team.id);
                       return (
@@ -550,34 +531,8 @@ export default function Auction() {
     } else {
       // Desktop layout - keep original
       return (
-        <div
-          className="h-screen w-full font-jetbrains flex flex-col justify-between p-6 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/images/ipl_sta1.jpg')", // Make sure this path is correct
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-            position: "relative",
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70" />
-
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-0 bg-gradient-to-b from-blue-50/80 to-white/80 pointer-events-none"
-            style={{ zIndex: "-1" }}
-          ></div>
-
-          {/* Header */}
-          <header className="text-center mb-6 relative z-10">
-            <h1 className="text-4xl font-bold text-white">
-              IPL Auction Simulator 2025
-            </h1>
-          </header>
-
-          {/* Main Grid Layout */}
-          <div className="grid grid-cols-4 gap-6 h-[75vh] relative z-10">
+        <>
+          <div className="grid grid-cols-4 gap-6 h-[75vh]">
             {/* First Column: Players Sold + Top Buys */}
             <div className="col-span-1 flex flex-col gap-6 h-[75vh]">
               {/* Players Sold Section */}
@@ -644,7 +599,7 @@ export default function Auction() {
                   ) : playersBought?.length > 0 ? (
                     getTopBuys().map((player) => (
                       <div
-                        key={player.id}
+                        key={player.id || `top-${Math.random()}`}
                         className="border p-3 rounded-lg bg-white/80"
                       >
                         <p className="font-bold">{player.name}</p>
@@ -673,7 +628,7 @@ export default function Auction() {
                     <div className="flex items-center">
                       <div className="w-16 h-16 flex-shrink-0 mr-4">
                         <img
-                          src={currentTeam.logo_url}
+                          src={currentTeam.logo_url || "/placeholder.svg"}
                           alt={currentTeam.short_name}
                           className="w-full h-full object-contain"
                         />
@@ -727,50 +682,58 @@ export default function Auction() {
               {/* Player Details */}
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-2">Player Details</h3>
-                {player ? (
+                {mockPlayer ? (
                   <div className="space-y-4">
-                    <h3 className="text-2xl font-semibold">{player.name}</h3>
+                    <h3 className="text-2xl font-semibold">
+                      {mockPlayer.name}
+                    </h3>
                     <div className="grid grid-cols-3 gap-6 text-left">
                       {/* Row 1 */}
                       <div>
                         <p className="font-semibold">Set Name:</p>
-                        <p className="text-gray-700">{player.setname}</p>
+                        <p className="text-gray-700">{mockPlayer.setname}</p>
                       </div>
                       <div>
                         <p className="font-semibold">Player No:</p>
-                        <p className="text-gray-700">{player.playerno}</p>
+                        <p className="text-gray-700">{mockPlayer.playerno}</p>
                       </div>
                       <div>
                         <p className="font-semibold">Base Price:</p>
-                        <p className="text-gray-700">₹{player.base_price}L</p>
+                        <p className="text-gray-700">
+                          ₹{mockPlayer.base_price}L
+                        </p>
                       </div>
                       {/* Row 2 */}
                       <div>
                         <p className="font-semibold">Age:</p>
-                        <p className="text-gray-700">{player.age}</p>
+                        <p className="text-gray-700">{mockPlayer.age}</p>
                       </div>
                       <div>
                         <p className="font-semibold">Country:</p>
-                        <p className="text-gray-700">{player.country}</p>
+                        <p className="text-gray-700">{mockPlayer.country}</p>
                       </div>
                       <div>
                         <p className="font-semibold">Capped:</p>
                         <p className="text-gray-700">
-                          {player.capped ? "Yes" : "No"}
+                          {mockPlayer.capped ? "Yes" : "No"}
                         </p>
                       </div>
                       {/* Row 3 */}
                       <div>
                         <p className="font-semibold">Role:</p>
-                        <p className="text-gray-700">{player.role}</p>
+                        <p className="text-gray-700">{mockPlayer.role}</p>
                       </div>
                       <div>
                         <p className="font-semibold">Batting Style:</p>
-                        <p className="text-gray-700">{player.batting_style}</p>
+                        <p className="text-gray-700">
+                          {mockPlayer.batting_style}
+                        </p>
                       </div>
                       <div>
                         <p className="font-semibold">Bowling Style:</p>
-                        <p className="text-gray-700">{player.bowling_style}</p>
+                        <p className="text-gray-700">
+                          {mockPlayer.bowling_style}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -797,11 +760,12 @@ export default function Auction() {
                             ? "border-blue-500 bg-blue-50"
                             : "bg-white/80"
                         }`}
+                        onClick={() => setSelectedTeam(team.id)}
                       >
                         <div className="flex items-center mb-2">
                           <div className="w-12 h-12 flex-shrink-0 mr-3">
                             <img
-                              src={team.logo_url}
+                              src={team.logo_url || "/placeholder.svg"}
                               alt={team.short_name}
                               className="w-full h-full object-contain"
                             />
@@ -827,7 +791,7 @@ export default function Auction() {
           </div>
 
           {/* Footer Section */}
-          <footer className="grid grid-cols-3 gap-6 mt-4 relative z-10">
+          <footer className="grid grid-cols-3 gap-6 mt-4">
             <div className="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-md text-center">
               <h2 className="text-lg font-semibold">Time Left</h2>
               <p className="text-2xl">{timer}s</p>
@@ -841,7 +805,7 @@ export default function Auction() {
               <p className="text-2xl">{getTeamName(currentBid.team)}</p>
             </div>
           </footer>
-        </div>
+        </>
       );
     }
   };
@@ -859,6 +823,13 @@ export default function Auction() {
     >
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70 z-0" />
+
+      {/* Header */}
+      <header className="text-center mb-4 sm:mb-6 relative z-10">
+        <h1 className="text-2xl sm:text-4xl font-bold text-white drop-shadow-lg">
+          IPL Auction Simulator 2025
+        </h1>
+      </header>
 
       {/* Main Content Area */}
       <div className="relative z-10 flex-1">{renderContent()}</div>
